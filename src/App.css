@@ -1,3 +1,9 @@
+:root {
+  --primary: #137376;
+  --secondary: #040410;
+  --text: #ffffff;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,4 +12,22 @@
 
 body {
   font-family: sans-serif;
+}
+
+button {
+  font: inherit;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: none;
+  outline: transparent;
+  border-radius: 5px;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--text);
 }
