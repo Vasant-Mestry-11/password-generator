@@ -1,6 +1,6 @@
 :root {
-  --primary: #137376;
-  --secondary: #040410;
+  --primary: #2a8b8b;
+  --secondary: #24232b;
   --text: #ffffff;
 }
 
@@ -16,6 +16,7 @@ body {
 
 button {
   font: inherit;
+  cursor: pointer;
 }
 
 .btn {

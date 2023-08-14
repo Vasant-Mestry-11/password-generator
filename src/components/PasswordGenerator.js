@@ -1,12 +1,8 @@
 import { useState } from "react";
-import {
-  NUMBERS,
-  SMALL_LETTERS,
-  CAPITAL_LETTERS,
-  SPECIAL_CHARACTERS,
-} from "../constants/passwordKeys";
+
 import "./PasswordGenerator.css";
 import { MEDIUM, GOOD, POOR, STRONG } from "../constants/status";
+import usePasswordGenerator from "../hook/usePasswordGenerator";
 
 /*
 
@@ -34,26 +30,28 @@ Steps:
 */
 
 const PasswordGenerator = ({ min = 4, max = 20 }) => {
-  const [rangeValue, setRangeValue] = useState(min);
-  const [password, setPassword] = useState("");
+  const [passwordLength, setPasswordLength] = useState(min);
   const [copied, setCopied] = useState(false);
-  let string = SMALL_LETTERS + CAPITAL_LETTERS + SPECIAL_CHARACTERS + NUMBERS;
+  const [checkboxes, setCheckboxes] = useState([
+    { id: 1, title: "Include small letters", state: false },
+    { id: 2, title: "Include capital letters", state: false },
+    { id: 3, title: "Include numbers", state: false },
+    { id: 4, title: "Include special characters", state: false },
+  ]);
+
+  const { password, errorMessage, generatePassword } = usePasswordGenerator(
+    checkboxes,
+    passwordLength
+  );
 
   const handleRangeChange = (event) => {
-    setRangeValue(event.target.value);
+    setPasswordLength(event.target.value);
   };
 
-  const generatePassword = () => {
-    let pass = "";
-    for (let i = 0; i <= rangeValue; i++) {
-      pass += string[Math.floor(Math.random() * rangeValue)];
-    }
-    setPassword(pass);
-    console.log("pass", pass);
-  };
-
-  const handleCheckboxChange = (e) => {
-    console.log(e.target);
+  const handleCheckboxChange = (index) => {
+    const updatedCheboxes = [...checkboxes];
+    updatedCheboxes[index].state = !updatedCheboxes[index].state;
+    setCheckboxes(updatedCheboxes);
   };
 
   const getStatus = () => {
@@ -87,46 +85,31 @@ const PasswordGenerator = ({ min = 4, max = 20 }) => {
         </div>
       )}
       <p className="container__subtitle">
-        Character Length <span>{rangeValue}</span>
+        Character Length <span>{passwordLength}</span>
       </p>
       <input
         type="range"
         min={min}
         max={max}
-        value={rangeValue}
+        value={passwordLength}
         onChange={handleRangeChange}
         className="container__input range"
       />
       <div className="container__checkboxes">
-        <div className="container__checkboxes-checkbox">
-          <input
-            type="checkbox"
-            id="small-letters"
-            onChange={handleCheckboxChange}
-          />
-          <label htmlFor="small-letters">Include Small Letters</label>
-        </div>
-        <div className="container__checkboxes-checkbox">
-          <input
-            type="checkbox"
-            id="capital-letters"
-            onChange={handleCheckboxChange}
-          />
-          <label htmlFor="capital-letters">Include Capital Letters</label>
-        </div>
-        <div className="container__checkboxes-checkbox">
-          <input type="checkbox" id="numbers" onChange={handleCheckboxChange} />
-          <label htmlFor="numbers">Include Numbers </label>
-        </div>
-        <div className="container__checkboxes-checkbox">
-          <input
-            type="checkbox"
-            id="special-characters"
-            onChange={handleCheckboxChange}
-          />
-          <label htmlFor="special-characters">Include Special Characters</label>
-        </div>
+        {checkboxes.map(({ id, title }, index) => {
+          return (
+            <div className="container__checkboxes-checkbox" key={id}>
+              <input
+                type="checkbox"
+                id={`checkbox-${id}`}
+                onChange={() => handleCheckboxChange(index)}
+              />
+              <label htmlFor={`checkbox-${id}`}>{title}</label>
+            </div>
+          );
+        })}
       </div>
+      {errorMessage && <b className="error_message">{errorMessage}</b>}
       <div className="container__password-strength">
         Strength: <span>{getStatus()}</span>
       </div>
